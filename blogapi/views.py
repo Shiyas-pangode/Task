@@ -1,11 +1,13 @@
 from django.shortcuts import render
 from .models import BlogModel
 
-from .serializers import UserSerializer , LoginSerializer , TokenSerializer ,BlogModelSerializer
 
+from .serializers import UserSerializer , LoginSerializer , TokenSerializer ,BlogModelSerializer
 from rest_framework import generics, permissions, status
 from .permissions import IsAuthorOnly 
+
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.generics import RetrieveAPIView ,RetrieveUpdateDestroyAPIView
 from rest_framework.views import APIView
@@ -44,8 +46,18 @@ class PostCreatedView(generics.CreateAPIView):
     serializer_class = BlogModelSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+
+
     def perform_create(self , serializer):
         serializer.save(author=self.request.user)
+
+    def get(self, request):
+        posts = BlogModel.objects.all()
+        paginator = PageNumberPagination()
+        paginator.page_size = 5  # Set page size
+        result_page = paginator.paginate_queryset(posts, request)
+        serializer = BlogModelSerializer(result_page, many=True)
+        return paginator.get_paginated_response(serializer.data)
 
 
 # class PostCreatedView(generics.RetrieveUpdateDestroyAPIView, generics.CreateAPIView):
