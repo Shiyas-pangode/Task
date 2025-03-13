@@ -1,26 +1,16 @@
-from django.shortcuts import render
-from general.models import BlogModel
-
-
-from .serializers import BlogModelSerializer
-from rest_framework import generics, permissions, status
-from .permissions import IsAuthorOnly 
-
 from rest_framework.response import Response
+from rest_framework import generics , permissions , status
+from .serializers import BlogModelSerializer
 from rest_framework.pagination import PageNumberPagination
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.generics import RetrieveAPIView ,RetrieveUpdateDestroyAPIView
+from general.models import BlogModel
 from rest_framework.decorators import api_view
-from django.db.models import Q
 from rest_framework.views import APIView
-
-
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
+from django.db.models import Q
 
 
 
 
+@api_view(['GET', 'POST'])
 class PostCreatedView(generics.CreateAPIView):
     queryset = BlogModel.objects.all()
     serializer_class = BlogModelSerializer
@@ -39,7 +29,14 @@ class PostCreatedView(generics.CreateAPIView):
         serializer = BlogModelSerializer(result_page, many=True)
         return paginator.get_paginated_response(serializer.data)
 
-   
+@api_view(['POST'])
+class PostDetailView(generics.RetrieveAPIView):
+    
+    serializer_class = BlogModelSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def get_queryset(self):
+        return BlogModel.objects.all()
 
 @api_view(['GET'])
 def search_posts(request):
@@ -52,7 +49,7 @@ def search_posts(request):
     serializer = BlogModelSerializer(posts, many=True)  
     return Response({'query': query, 'results': serializer.data})
 
-
+@api_view(['PUT', 'DELETE'])
 class PostUpdateDeleteView(APIView):
     
     permission_classes = [permissions.IsAuthenticated]  
@@ -80,12 +77,4 @@ class PostUpdateDeleteView(APIView):
 
         post.delete()
         return Response({"message": "Post deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
-
-class PostDetailView(generics.RetrieveAPIView):
-    
-    serializer_class = BlogModelSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        return BlogModel.objects.all()
-    
+   
