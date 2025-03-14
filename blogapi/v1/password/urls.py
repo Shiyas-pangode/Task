@@ -5,5 +5,5 @@ from .views import PasswordResetView
 
 urlpatterns = [
 
-    path('resetpassword/',PasswordResetView, name='reset'),
+    path('resetpassword/',PasswordResetView.as_view(), name='reset'),
 ]

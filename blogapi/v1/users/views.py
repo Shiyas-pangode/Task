@@ -10,7 +10,7 @@ from general.models import BlogModel
 
 
 
-@api_view(['POST'])
+
 class UserRegistrationView(generics.CreateAPIView):
     serializer_class = UserSerializer
     permission_classes = [permissions.AllowAny]

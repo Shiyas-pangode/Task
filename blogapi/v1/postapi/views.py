@@ -10,7 +10,7 @@ from django.db.models import Q
 
 
 
-@api_view(['GET', 'POST'])
+
 class PostCreatedView(generics.CreateAPIView):
     queryset = BlogModel.objects.all()
     serializer_class = BlogModelSerializer
@@ -29,7 +29,7 @@ class PostCreatedView(generics.CreateAPIView):
         serializer = BlogModelSerializer(result_page, many=True)
         return paginator.get_paginated_response(serializer.data)
 
-@api_view(['POST'])
+
 class PostDetailView(generics.RetrieveAPIView):
     
     serializer_class = BlogModelSerializer
@@ -49,7 +49,7 @@ def search_posts(request):
     serializer = BlogModelSerializer(posts, many=True)  
     return Response({'query': query, 'results': serializer.data})
 
-@api_view(['PUT', 'DELETE'])
+
 class PostUpdateDeleteView(APIView):
     
     permission_classes = [permissions.IsAuthenticated]  

@@ -5,8 +5,8 @@ from .views import my_view , UserLoginView
 
 urlpatterns = [
     path('view/', my_view, name = 'view'),
-    path('login/', UserLoginView, name = 'login'),
-    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'), 
+    path('login/', UserLoginView.as_view(), name = 'login'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
 
 

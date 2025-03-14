@@ -6,7 +6,7 @@ from .serializers import PasswordResetSerializer
 from rest_framework.decorators import api_view, permission_classes
 
 
-@api_view(['GET', 'POST'])
+
 @permission_classes([permissions.IsAuthenticated]) 
 class PasswordResetView(generics.UpdateAPIView):
     serializer_class = PasswordResetSerializer

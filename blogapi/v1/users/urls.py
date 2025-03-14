@@ -6,5 +6,5 @@ from . import views
 from .views import UserRegistrationView 
 
 urlpatterns = [
-    path('registration/', UserRegistrationView, name = 'register'),
+    path('registration/', UserRegistrationView.as_view(), name = 'register'),
 ]

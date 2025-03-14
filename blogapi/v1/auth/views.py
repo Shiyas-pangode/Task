@@ -8,7 +8,7 @@ from general.models import BlogModel
 def my_view(request):
     return HttpResponse('hello')
 
-@api_view(['POST'])
+
 class UserLoginView(generics.GenericAPIView):
     serializer_class = LoginSerializer
 
