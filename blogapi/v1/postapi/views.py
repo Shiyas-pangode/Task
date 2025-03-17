@@ -1,20 +1,21 @@
 from rest_framework.response import Response
 from rest_framework import generics , permissions , status
-from .serializers import BlogModelSerializer
 from rest_framework.pagination import PageNumberPagination
-from general.models import BlogModel
+from rest_framework.generics import ListAPIView
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated ,AllowAny
+
 from django.db.models import Q
 
-
-
+from .serializers import BlogModelSerializer
+from general.models import BlogModel
 
 
 class PostCreatedView(generics.CreateAPIView):
     queryset = BlogModel.objects.all()
     serializer_class = BlogModelSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
 
 
@@ -30,29 +31,21 @@ class PostCreatedView(generics.CreateAPIView):
         return paginator.get_paginated_response(serializer.data)
 
 
-class PostDetailView(generics.RetrieveAPIView):
+class PostRetrieveView(generics.RetrieveAPIView):
+
+    permission_classes = [IsAuthenticated]
     
     serializer_class = BlogModelSerializer
-    permission_classes = [permissions.AllowAny]
 
     def get_queryset(self):
         return BlogModel.objects.all()
 
-@api_view(['GET'])
-def search_posts(request):
-    query = request.GET.get('q', '')  
-    posts = BlogModel.objects.all()
 
-    if query:
-        posts = posts.filter(Q(title__icontains=query))  
-
-    serializer = BlogModelSerializer(posts, many=True)  
-    return Response({'query': query, 'results': serializer.data})
 
 
 class PostUpdateDeleteView(APIView):
     
-    permission_classes = [permissions.IsAuthenticated]  
+    permission_classes = [IsAuthenticated]  
 
     def put(self, request, pk):
         
@@ -77,4 +70,20 @@ class PostUpdateDeleteView(APIView):
 
         post.delete()
         return Response({"message": "Post deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+
+
+
+class PostListView(ListAPIView):
+    queryset = BlogModel.objects.all()
+    serializer_class = BlogModelSerializer
+
+       
+    def get_queryset(self):
+        query = self.request.GET.get('q', '')  
+        queryset = BlogModel.objects.all()
+
+        if query:
+            queryset = queryset.filter(Q(title__icontains=query))  
+        
+        return queryset
    

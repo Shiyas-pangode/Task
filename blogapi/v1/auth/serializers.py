@@ -1,23 +1,29 @@
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
+
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth.models import User
+
 from general.models import BlogModel
-from django.contrib.auth import authenticate
+
 
 
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(write_only=True)
     password = serializers.CharField(write_only=True, style={'input_type': 'password'})
+    email = serializers.CharField(write_only=True, style = {'input_type':'email'})
     
     def validate(self, data):
         username = data.get("username")
         password = data.get("password")
+        email = data.get("email")
+        
 
-        if not username or not password:
-            raise serializers.ValidationError({"error": "Must include 'username' and 'password'."})
+        if not username or not password or not email:
+            raise serializers.ValidationError({"error": "Must include 'username' , 'password' and 'email'."})
 
-        user = authenticate(request=self.context.get('request') ,username=username, password=password)
+        user = authenticate(request=self.context.get('request') ,username=username, password=password , email = email)
         if not user:
             raise serializers.ValidationError({"error": "Unable to log in with provided credentials."})
 
