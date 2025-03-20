@@ -1,15 +1,20 @@
-
-
+import os
 from pathlib import Path
+from dotenv import load_dotenv
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Load environment variables from .env file
+load_dotenv()
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Get SECRET_KEY from environment variables
+SECRET_KEY = os.getenv('SECRET_KEY')
 
+# Fallback if .env is not loaded correctly
+if not SECRET_KEY:
+    raise ValueError("SECRET_KEY not found in .env file")
 
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-(x&6$41%xy9hrg1p_^dlnq1e9w2#n%#$+^p(*m8ut&r7lhl*@!'
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -46,7 +51,8 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES':[
         'rest_framework_simplejwt.authentication.JWTAuthentication',
 
-    ]
+    ],
+    
 }
 
 SIMPLE_JWT = {

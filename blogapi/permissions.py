@@ -1,7 +1,0 @@
-from rest_framework import permissions
-
-class IsAuthorOnly(permissions.BasePermission):
-   
-
-    def has_object_permission(self, request, view, obj):
-        return obj.author == request.user  # Only the author can modify the post

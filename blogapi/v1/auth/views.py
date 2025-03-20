@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from rest_framework import generics , permissions , status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework.permissions import AllowAny
 
 from .serializers import LoginSerializer , TokenSerializer
 from general.models import BlogModel
@@ -13,6 +14,7 @@ def my_view(request):
 
 class UserLoginView(generics.GenericAPIView):
     serializer_class = LoginSerializer
+    permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

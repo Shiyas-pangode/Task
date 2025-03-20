@@ -4,10 +4,11 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import ListAPIView
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated ,AllowAny
+from rest_framework.permissions import IsAuthenticated ,AllowAny 
 
+from django.shortcuts import get_object_or_404
 from django.db.models import Q
-
+from .permissions import IsAuthorOrReadOnly
 from .serializers import BlogModelSerializer
 from general.models import BlogModel
 
@@ -42,36 +43,10 @@ class PostRetrieveView(generics.RetrieveAPIView):
 
 
 
-
-class PostUpdateDeleteView(APIView):
-    
-    permission_classes = [IsAuthenticated]  
-
-    def put(self, request, pk):
-        
-        post = get_object_or_404(BlogModel, pk=pk)
-
-        if post.author != request.user:
-            return Response({"error": "You can only update your own posts."}, status=status.HTTP_403_FORBIDDEN)
-
-        serializer = BlogModelSerializer(post, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk):
-       
-        post = get_object_or_404(BlogModel, pk=pk)
-
-        if post.author != request.user:
-            return Response({"error": "You can only delete your own posts."}, status=status.HTTP_403_FORBIDDEN)
-
-        post.delete()
-        return Response({"message": "Post deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
-
-
+class BlogDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = BlogModel.objects.all()
+    serializer_class = BlogModelSerializer
+    permission_classes = [IsAuthorOrReadOnly, permissions.IsAuthenticated]  
 
 class PostListView(ListAPIView):
     queryset = BlogModel.objects.all()
