@@ -51,6 +51,7 @@ class BlogDetailView(generics.RetrieveUpdateDestroyAPIView):
 class PostListView(ListAPIView):
     queryset = BlogModel.objects.all()
     serializer_class = BlogModelSerializer
+    permission_classes =[IsAuthenticated]
 
        
     def get_queryset(self):
