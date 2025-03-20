@@ -2,22 +2,21 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
+
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Get SECRET_KEY from environment variables
+
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-# Fallback if .env is not loaded correctly
+
 if not SECRET_KEY:
     raise ValueError("SECRET_KEY not found in .env file")
 
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+
 
 ALLOWED_HOSTS = []
 
